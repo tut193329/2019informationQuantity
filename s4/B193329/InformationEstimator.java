@@ -30,7 +30,7 @@ public class InformationEstimator implements InformationEstimatorInterface{
     }
 
     // IQ: information quantity for a count,  -log2(count/sizeof(space))
-    double iq(int freq) {
+    double iq(int freq) {//情報量の計算 f()
 	return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
@@ -39,11 +39,11 @@ public class InformationEstimator implements InformationEstimatorInterface{
 	myFrequencer = new Frequencer();
 	mySpace = space; myFrequencer.setSpace(space); 
     }
-
+/*
     public double estimation(){
 	boolean [] partition = new boolean[myTarget.length+1];
 	int np;
-	np = 1<<(myTarget.length-1);
+	np = 1<<(myTarget.length-1);//2^(n-1) n:target.length //npは比較する項の数
 	// System.out.println("np="+np+" length="+myTarget.length);
 	double value = Double.MAX_VALUE; // value = mininimum of each "value1".
 
@@ -60,20 +60,20 @@ public class InformationEstimator implements InformationEstimatorInterface{
 
 	    // Compute Information Quantity for the partition, in "value1"
 	    // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
+        double value1 = (double) 0.0;
 	    int end = 0;;
 	    int start = end;
 	    while(start<myTarget.length) {
-		// System.out.write(myTarget[end]);
-		end++;;
-		while(partition[end] == false) { 
-		    // System.out.write(myTarget[end]);
-		    end++;
-		}
-		// System.out.print("("+start+","+end+")");
-		myFrequencer.setTarget(subBytes(myTarget, start, end));
-		value1 = value1 + iq(myFrequencer.frequency());
-		start = end;
+		 	// System.out.write(myTarget[end]);
+			end++;;
+			while(partition[end] == false) { 
+		   	 	// System.out.write(myTarget[end]);
+		    	end++;
+			}
+			// System.out.print("("+start+","+end+")");
+			myFrequencer.setTarget(subBytes(myTarget, start, end));
+			value1 = value1 + iq(myFrequencer.frequency());
+			start = end;
 	    }
 	    // System.out.println(" "+ value1);
 
@@ -82,6 +82,31 @@ public class InformationEstimator implements InformationEstimatorInterface{
 	}
 	return value;
     }
+*/
+	public double estimation(){
+    double [] Iq = new double[myTarget.length];
+	for(int k=0; k<myTarget.length; k++){
+		//System.out.println("Iq["+k+"] = "+ Iq[k]);
+	}
+    double value1 = (double) 0.0;
+    for( int i = 0 ; i < myTarget.length ; i++ ){
+        for( int j = 0 ; j <= i ; j++ ){
+            if(j == 0){
+                myFrequencer.setTarget(subBytes(myTarget, j, i+1));
+                value1 = iq(myFrequencer.frequency());
+                Iq[i] = value1;
+            }else{
+                myFrequencer.setTarget(subBytes(myTarget, j, i+1));
+                value1 = Iq[j-1] + iq(myFrequencer.frequency());
+				//System.out.println("value1 = "+value1 +"Iq["+i+"] = "+ Iq[i]);
+                if(Iq[i] > value1) Iq[i] = value1;
+            }
+        }
+        // System.out.printf("i = %d, Iq[i] = %f\n",i,Iq[i]);
+    }
+    return Iq[myTarget.length-1];
+	}
+
 
     public static void main(String[] args) {
 	InformationEstimator myObject;
