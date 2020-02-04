@@ -162,6 +162,7 @@ public class Frequencer implements FrequencerInterface{
         //
         // ここに比較のコードを書け
         
+        /*
         int n1 = suffixArray[i];
         int n2 = j;
         while(n1<mySpace.length && n2<k){
@@ -184,6 +185,23 @@ public class Frequencer implements FrequencerInterface{
             return 0;
         }
         return 0; // この行は変更しなければならない。
+        */
+        int n1 = suffixArray[i];
+        int n2 = j;
+        int x = 0;
+        while(n1+x<mySpace.length && n2+x<k){
+            if(mySpace[n1+x] > myTarget[n2+x]){
+                return 1;
+            }else if(mySpace[n1+x] < myTarget[n2+x]){
+                return -1;
+            }
+            x++;
+        }
+        //
+        if(mySpace.length-n1<k-j){
+            return -1;
+        }
+        return 0;
     }
     
     
