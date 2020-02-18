@@ -64,8 +64,8 @@ public class Frequencer implements FrequencerInterface{
         // if suffix_i = suffix_j, it returns 0;
         
         // ここにコードを記述せよ
-        int n1 = suffixArray[i];
-        int n2 = suffixArray[j];
+        int n1 = i;
+        int n2 = j;
         while(n1<mySpace.length && n2<mySpace.length){
             if(mySpace[n1] > mySpace[n2]){
                 return 1;
@@ -75,12 +75,12 @@ public class Frequencer implements FrequencerInterface{
             n1++;
             n2++;
         }
-        if(n2>=mySpace.length){
+        /*if(n2>=mySpace.length){
             return 1;
-        }
-        
-        //
-        return 0; // この行は変更しなければいけない。
+        }*/
+        if(n1<n2) return 1;
+        else if (n1>n2) return -1;
+        else return 0; // この行は変更しなければいけない。
     }
     
     public void setSpace(byte []space) {
@@ -94,6 +94,7 @@ public class Frequencer implements FrequencerInterface{
         }
         //
         // ここに、int suffixArrayをソートするコードを書け。
+        /*
         for(int i = 0; i < mySpace.length-1; i++){
             for(int j = mySpace.length-1; j>i; j--){
                 if(suffixCompare(j-1,j)==1){
@@ -102,52 +103,31 @@ public class Frequencer implements FrequencerInterface{
                     suffixArray[j] = tmp;
                 }
             }
-        }
-        //mergeSort(suffixArray);
+        }*/
+        quickSort(0,suffixArray.length-1);
         // 　順番はsuffixCompareで定義されるものとする。
     }
     
-    //mergeSortです。
-    private void merge(int[] a1, int[] a2, int[] a){
-        int i=0,j=0,k=0;
-        /*
-        while(i<a1.length||j<a2.length){
-            if(j>=a2.length||(i<a1.length && suffixCompare(i,j)==1)){
-                a[i+j]=a1[i];
-                i++;
-            }
-            else{
-                a[i+j]=a2[j];
-                j++;
-            }
-        }*/
-        while(i<a1.length && j<a2.length){
-            if(suffixCompare(i,j)<=0){
-                a[k++] = a1[i++];
-            }
-            else{
-                a[k++] = a2[j++];
+    //quick sort
+    private void quickSort(int start, int end){
+        if(start >= end){
+            return;
+        }
+        int p = suffixArray[(start+end)/2];
+        int l = start, r = end, tmp;
+        while(l<=r){
+            while(suffixCompare(suffixArray[l],p) < 0) l++;
+            while(suffixCompare(suffixArray[r],p) > 0) r--;
+            if(l<=r){
+                tmp = suffixArray[l];
+                suffixArray[l]=suffixArray[r];
+                suffixArray[r]=tmp;
+                l++;
+                r--;
             }
         }
-        while(i<a1.length){
-            a[k++] = a1[i++];
-        }
-        while(j<a2.length){
-            a[k++] = a2[j++];
-        }
-    }
-    private void mergeSort(int[] a){
-        if(a.length>1){
-            int m = a.length/2;
-            int n = a.length-m;
-            int [] a1=new int [m];
-            int [] a2=new int [n];
-            for(int i=0; i<m; i++) a1[i]=a[i];
-            for(int i=0; i<n; i++) a2[i]=a[m+i];
-            mergeSort(a1);
-            mergeSort(a2);
-            merge(a1,a2,a);
-        }
+        quickSort(start,r);
+        quickSort(l,end);
     }
 
     // Suffix Arrayを用いて、文字列の頻度を求めるコード
