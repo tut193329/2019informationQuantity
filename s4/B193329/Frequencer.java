@@ -103,9 +103,53 @@ public class Frequencer implements FrequencerInterface{
                 }
             }
         }
+        //mergeSort(suffixArray);
         // 　順番はsuffixCompareで定義されるものとする。
     }
     
+    //mergeSortです。
+    private void merge(int[] a1, int[] a2, int[] a){
+        int i=0,j=0,k=0;
+        /*
+        while(i<a1.length||j<a2.length){
+            if(j>=a2.length||(i<a1.length && suffixCompare(i,j)==1)){
+                a[i+j]=a1[i];
+                i++;
+            }
+            else{
+                a[i+j]=a2[j];
+                j++;
+            }
+        }*/
+        while(i<a1.length && j<a2.length){
+            if(suffixCompare(i,j)<=0){
+                a[k++] = a1[i++];
+            }
+            else{
+                a[k++] = a2[j++];
+            }
+        }
+        while(i<a1.length){
+            a[k++] = a1[i++];
+        }
+        while(j<a2.length){
+            a[k++] = a2[j++];
+        }
+    }
+    private void mergeSort(int[] a){
+        if(a.length>1){
+            int m = a.length/2;
+            int n = a.length-m;
+            int [] a1=new int [m];
+            int [] a2=new int [n];
+            for(int i=0; i<m; i++) a1[i]=a[i];
+            for(int i=0; i<n; i++) a2[i]=a[m+i];
+            mergeSort(a1);
+            mergeSort(a2);
+            merge(a1,a2,a);
+        }
+    }
+
     // Suffix Arrayを用いて、文字列の頻度を求めるコード
     // ここから、指定する範囲のコードは変更してはならない。
     
@@ -162,7 +206,7 @@ public class Frequencer implements FrequencerInterface{
         //
         // ここに比較のコードを書け
         
-        /*
+        /* ver.1
         int n1 = suffixArray[i];
         int n2 = j;
         while(n1<mySpace.length && n2<k){
@@ -186,6 +230,7 @@ public class Frequencer implements FrequencerInterface{
         }
         return 0; // この行は変更しなければならない。
         */
+
         int n1 = suffixArray[i];
         int n2 = j;
         int x = 0;
@@ -231,12 +276,37 @@ public class Frequencer implements FrequencerInterface{
         //
         // ここにコードを記述せよ。
         //
+
+        /* //オーダ変更前
         int startIndex = 0;
         for(int i = 0; i < suffixArray.length; i++){
             if(0==targetCompare(i,start,end)){
                 startIndex = i;
                 break;
             }
+        }*/
+
+        int startIndex = 0;
+        int lower = 0;
+        int upper = suffixArray.length-1;
+        while(lower <= upper){
+            int mid = (lower + upper)/2;
+            if(targetCompare(mid,start,end)==0){
+                int num = 1;
+                while( (mid-num)>=0 && targetCompare(mid-num,start,end)==0){
+                    num++;
+                }
+                num--;
+                startIndex = mid-num;
+                break;
+            } else if(targetCompare(mid,start,end)<0){
+                lower = mid + 1;
+            } else {
+                upper = mid - 1;
+            }
+        }
+        if(startIndex < 0){
+            System.out.println("見つかりません");
         }
         return startIndex;
     }
@@ -266,12 +336,37 @@ public class Frequencer implements FrequencerInterface{
         //
         //　ここにコードを記述せよ
         //
+
+        /*//オーダ変更前
         int endIndex = 0;
         for(int i = suffixArray.length; i>0; i--){
             if(0==targetCompare(i-1,start,end)){
                 endIndex = i;
                 break;
             }
+        }*/
+
+        int endIndex = 0;
+        int lower = 0;
+        int upper = suffixArray.length-1;
+        while(lower <= upper){
+            int mid = (lower + upper)/2;
+            if(targetCompare(mid,start,end)==0){
+                int num = 1;
+                while( (mid+num)<=suffixArray.length-1 && targetCompare(mid+num,start,end)==0){
+                    num++;
+                }
+                //num--; //不要
+                endIndex = mid+num;
+                break;
+            } else if(targetCompare(mid,start,end)<0){
+                lower = mid + 1;
+            } else {
+                upper = mid - 1;
+            }
+        }
+        if(endIndex < 0){
+            System.out.println("見つかりません");
         }
         return endIndex;
     }
