@@ -286,29 +286,29 @@ public class Frequencer implements FrequencerInterface{
             }
         }*/
 
-        int startIndex = 0;
-        int lower = 0;
+
+        if(targetCompare(0,start,end)==0){
+            return 0;
+        }
+        int lower = 1;
         int upper = suffixArray.length-1;
-        while(lower <= upper){
+        while(true){
             int mid = (lower + upper)/2;
-            if(targetCompare(mid,start,end)==0){
-                int num = 1;
-                while( (mid-num)>=0 && targetCompare(mid-num,start,end)==0){
-                    num++;
+            int result = targetCompare(mid,start,end);
+            if(lower >= upper){
+                if(result == 0){
+                    return mid;
+                }else{
+                    return -1;
                 }
-                num--;
-                startIndex = mid-num;
-                break;
-            } else if(targetCompare(mid,start,end)<0){
+            }else if(result == 0 && targetCompare(mid-1,start,end) != 0){
+                return mid;
+            }else if(result == -1){
                 lower = mid + 1;
-            } else {
+            }else{
                 upper = mid - 1;
             }
         }
-        if(startIndex < 0){
-            System.out.println("見つかりません");
-        }
-        return startIndex;
     }
     
     private int subByteEndIndex(int start, int end) {
@@ -346,29 +346,28 @@ public class Frequencer implements FrequencerInterface{
             }
         }*/
 
-        int endIndex = 0;
+        if(targetCompare(mySpace.length-1, start, end) == 0){
+			return mySpace.length;
+		}
         int lower = 0;
-        int upper = suffixArray.length-1;
-        while(lower <= upper){
+        int upper = suffixArray.length-2;
+        while(true){
             int mid = (lower + upper)/2;
-            if(targetCompare(mid,start,end)==0){
-                int num = 1;
-                while( (mid+num)<=suffixArray.length-1 && targetCompare(mid+num,start,end)==0){
-                    num++;
+            int result =targetCompare(mid,start,end);
+            if(lower >= upper){
+                if(result == 0){
+                    return mid+1;
+                }else{
+                    return -1;
                 }
-                //num--; //不要
-                endIndex = mid+num;
-                break;
-            } else if(targetCompare(mid,start,end)<0){
-                lower = mid + 1;
-            } else {
+            }else if(result == 0 && targetCompare(mid+1,start,end) != 0){
+                return mid + 1;
+            }else if(result == 1){
                 upper = mid - 1;
+            } else {
+                lower = mid + 1;
             }
         }
-        if(endIndex < 0){
-            System.out.println("見つかりません");
-        }
-        return endIndex;
     }
     
     
